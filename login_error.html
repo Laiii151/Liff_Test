@@ -1,0 +1,201 @@
+<html><head>
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>世新整合入口</title>
+		<meta name="GENERATOR" content="Microsoft Visual Studio .NET 7.1">
+		<meta name="CODE_LANGUAGE" content="Visual Basic .NET 7.1">
+		<meta name="vs_defaultClientScript" content="JavaScript">
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<link rel="stylesheet" type="text/css" href="css/shusso.css">
+		<style type="text/css">
+			.style1 { MARGIN: 51px auto 50px 10px; WIDTH: 209px; FLOAT: right; HEIGHT: 310px }
+			.style2 { TEXT-ALIGN: center; MARGIN: 40px 70px 1px 180px; WIDTH: 635px; HEIGHT: 50px; CLEAR: both; FONT-SIZE: 10pt }
+			.style3 { BORDER-BOTTOM: 0px solid; BORDER-LEFT: 0px solid; VERTICAL-ALIGN: middle; BORDER-TOP: 0px solid; BORDER-RIGHT: 0px solid }
+			.style4 { MARGIN: 30px auto 0px 70px; WIDTH: 320px; FLOAT: left }
+			.guestbtnarea { WIDTH: 194px; HEIGHT: 107px; MARGIN-LEFT: 120px; CLEAR: both }
+		</style>
+		<script language="javascript">
+<!--
+var $get=function(f, e){
+    if (!e) return document.getElementById(f);
+    if (e.getElementById) {return e.getElementById(f)}else{return null};
+};
+
+var br = navigator.platform.toLowerCase();
+var r = 'true';
+if ((br != "win32" && br != "win64" && br != "macppc" && br != "macintel" && br != "linux586") && (r == "true")) {
+	window.location="MobileLogin.aspx?" +  window.top.location.search.substring(1)
+}
+
+function DoOnload() {
+	//$get('txtCardNo').focus();
+	scrollTo(132,316);
+	$get('txtMyId').focus();
+	if (''=='') {return false}
+	var myOpener = null;
+	myOpener = window.opener;
+	try {
+		if (window.parent.SSO_leftFrame != null){
+			window.parent.SSO_leftFrame.location="LeftMenu.aspx";
+			window.parent.SSO_top.location="index_top.aspx";
+		}
+		if (myOpener != null){
+			if (myOpener.parent.SSO_leftFrame != null){
+				myOpener.parent.SSO_leftFrame.location="LeftMenu.aspx";
+				myOpener.parent.SSO_top.location="index_top.aspx";
+			}
+		}
+	}
+	catch (e) {}
+	if (''=='1') window.open("Logout.aspx?OnlyLogoutOther=1", "LogoutAll", "width=600,height=500,top=10,left=2000");
+	window.focus();
+	window.location='';
+	return false;
+}
+
+function jBeforeSubmit(){
+	$get('btnLogin').style.display='none';
+	$get('lblMessage').innerHTML='登入中，請稍候';
+	//$get('iframeLogout').src ='LogoutAllSystem.aspx';
+	//window.setTimeout("$get('Form1').submit()",3000); 
+	$get('Form1').submit(); 
+	return false;
+}
+
+-->
+		</script>
+	</head>
+	<body onload="DoOnload()" ms_positioning="FlowLayout">
+		<form method="post" action="./login.aspx?ReturnUrl=%2fSSO%2fAuth.aspx%3fCheckSessionID%3dcbdbr44fyzwcvxubclw3qbfd%26GetAuthUrl%3dhttps%3a%2f%2fap4.shu.edu.tw%2fSTU1%2fLogin.aspx%26ReturnUrl%3dhttps%3a%2f%2fap4.shu.edu.tw%2fstu1%2flogin.aspx" onsubmit="javascript:return WebForm_OnSubmit();" id="Form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTQ3NTcyOTMwNWRkuYUcmqFGy16cP/V+/OPUxE29MJ6DQ/XtyVeW9oIHvCk=">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['Form1'];
+if (!theForm) {
+    theForm = document.Form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/SSO/WebResource.axd?d=gGjOqM2Hsm6ZnlOrg9xGIwl5ROdIYtiPAHFffZjtk4A9jc0iKLSVUYf8PNlW2-6h7lEluVL9Vhjfc2KGlcyNdoUtOFvH0bSseymRNNv0qoA1&amp;t=638902061280000000" type="text/javascript"></script>
+
+
+<script src="/SSO/WebResource.axd?d=pXp8kL3Cd7oTk2GyEcxudL8Fpd-b3sf0-_4l4DGOeSqlWNWSz7mNDX3UpJ3qz9-KPU0xlRXCXNLt_-Ng1eIGCClIJGrmxSvA0234euGb6zw1&amp;t=638902061280000000" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+function WebForm_OnSubmit() {
+if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;return jBeforeSubmit();
+return true;
+}
+//]]>
+</script>
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4DA511F1">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAASUMYqD9IpvS6/mB1Ngfs/0OhGJWysTyXxz+M/XA4mky6mksUNiuEOLKkNtfl4u+FainihG6d/Xh3PZm3b5AoMQWqBJreuYrxly3tHbWXwMKzJxkeiRb481trAWxM2yQVU=">
+</div>
+			<div id="ssobox">
+				<div class="top">
+					<h1><a title="進行登入" href="#top01"><img border="0" alt="進行登入" src="images/word.png" width="736" height="116"></a><img title="世新大學 資訊服務整合入口" alt="世新大學 資訊服務整合入口" src="images/word.png" width="750" height="75"></h1>
+				</div>
+				<div class="ct">
+					<div class="style4">
+						<h2 style="Z-INDEX: 0" class="loginname"><a name="top01"><img title="Login 請輸入帳號密碼" alt="Login 請輸入帳號密碼" src="images/word.png" width="262" height="60"></a></h2>
+						<div style="Z-INDEX: 0; WIDTH: 96px; HEIGHT: 82px" class="loginpic">
+							<div style="HEIGHT: 75px">.</div>
+							<label class="lablet1">
+								<span id="lblMessage" style="color:Red;Z-INDEX: 0">登入帳號或密碼錯誤！</span><span id="rvMyId" style="Z-INDEX:0;display:none;">請輸入您的帳號<br></span><span id="rvMyPd" style="Z-INDEX:0;display:none;">請輸入您的密碼<br></span></label></div>
+						<div style="Z-INDEX: 0; BACKGROUND-COLOR: #f6f7fd" class="loginct"><label class="lablet1">帳號 
+								User ID</label>
+							<input name="txtMyId" type="text" value="A111223012" maxlength="20" id="txtMyId" style="width:130px;Z-INDEX: 0"><label class="lablet1">密碼 
+								Password</label>
+							<input name="txtMyPd" type="password" maxlength="20" id="txtMyPd" autocomplete="off" style="width:130px;Z-INDEX: 0"><input type="submit" name="btnLogin" value="登入" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btnLogin&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btnLogin" class="surebtn" style="Z-INDEX: 0"></div>
+						<div class="guestbtnarea"><a href="https://ap2.shu.edu.tw/STU1/Loginguest.aspx" target="_blank"><img src="images/sso-guestbtn.png" title="以訪客身分進教務系統" alt="以訪客身分進教務系統" width="194" height="107" border="0"></a></div>
+					</div>
+					<div style="WIDTH: 464px; HEIGHT: 410px" class="style1">
+						<h3><img title="注意事項notice" alt="注意事項notice" src="images/word.png" width="248" height="50"></h3>
+						<h4 style="HEIGHT: 35px"></h4>
+						<h4 class="lablet1">新生、新同仁請參考<a href="https://cc.web.shu.edu.tw/s1/" target="_blank"><img class="style3" title="密碼說明(另開視窗)" alt="密碼說明(另開視窗)" src="images/sso-tlkbtn.jpg"></a>以進行登入。<br>
+							<img title="注意1. 密碼有分大小寫！" alt="注意1. 密碼有分大小寫！" src="images/Login_memo1.png"></h4>
+						<h4 class="lablet1">若想預覽課表，<a href="https://ap2.shu.edu.tw/STU1/Loginguest.aspx" target="_blank">請點此處</a>
+							並以『訪客』進入。<br>
+							&nbsp;
+						</h4>
+						<h4 class="lablet1">帳號可使用員工編號、學號、Email帳號、身分證號以進行登入。<br>
+							<span lang="zh-tw">&nbsp;</span><br>
+							<img title="Email帳號不用寫『@mail.shu.edu.tw』" alt="Email帳號不用寫『@mail.shu.edu.tw』" src="images/Login_memo2.png"><br>
+							&nbsp;
+						</h4>
+						<h4 class="lablet1">建議您可使用『<a href="SYS/SYS00004.aspx" target="_blank">山洞口密碼變更</a> 』整合您的密碼。<br>
+							<br>
+							想調整登入時間長短，可使用『<a href="SYS/SYS00009.aspx" target="_blank">登出時間設定</a>』。 &nbsp;
+							<br>
+						</h4>
+					</div>
+					<div class="style2">世新大學圖資處 版權所有 2010 Shih Hsin University All Rights Reserved.<br>
+						本網站最佳瀏覽解析度為1280*1024，建議使用IE8.0以上版本瀏覽器，服務專線 #2320
+					</div>
+				</div>
+			</div>
+		
+<script type="text/javascript">
+//<![CDATA[
+var Page_Validators =  new Array(document.getElementById("rvMyId"), document.getElementById("rvMyPd"));
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+var rvMyId = document.all ? document.all["rvMyId"] : document.getElementById("rvMyId");
+rvMyId.controltovalidate = "txtMyId";
+rvMyId.errormessage = "請輸入您的帳號<BR>";
+rvMyId.display = "Dynamic";
+rvMyId.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+rvMyId.initialvalue = "";
+var rvMyPd = document.all ? document.all["rvMyPd"] : document.getElementById("rvMyPd");
+rvMyPd.controltovalidate = "txtMyPd";
+rvMyPd.errormessage = "請輸入您的密碼<BR>";
+rvMyPd.display = "Dynamic";
+rvMyPd.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+rvMyPd.initialvalue = "";
+//]]>
+</script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+
+var Page_ValidationActive = false;
+if (typeof(ValidatorOnLoad) == "function") {
+    ValidatorOnLoad();
+}
+
+function ValidatorOnSubmit() {
+    if (Page_ValidationActive) {
+        return ValidatorCommonOnSubmit();
+    }
+    else {
+        return true;
+    }
+}
+        //]]>
+</script>
+</form>
+		
+	
+
+</body></html>

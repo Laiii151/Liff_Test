@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>教務系統登入驗證測試</title>
+</head>
+<body>
+  <h2>教務系統帳密驗證測試頁面</h2>
+  <form id="loginForm">
+    <label>LINE User ID:<input type="text" id="lineUserId" required /></label><br /><br />
+    <label>學號:<input type="text" id="studentId" required /></label><br /><br />
+    <label>密碼:<input type="password" id="password" required /></label><br /><br />
+    <button type="submit">驗證登入</button>
+  </form>
+
+  <p id="result"></p>
+
+  <script>
+    document.getElementById('loginForm').onsubmit = async function(e) {
+      e.preventDefault();
+
+      const lineUserId = document.getElementById('lineUserId').value;
+      const studentId = document.getElementById('studentId').value;
+      const password = document.getElementById('password').value;
+
+      const response = await fetch('/verify_login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lineUserId, studentId, password })
+      });
+
+      const result = await response.json();
+      document.getElementById('result').textContent = result.message;
+    };
+  </script>
+</body>
+</html>
