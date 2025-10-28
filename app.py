@@ -25,7 +25,7 @@ def verify_login():
     success = Login.main(student_id, password)
 
     if success:
-        msg = "教務系統登入成功！您可以繼續查詢成績。"
+        msg = "教務系統登入成功！可以關閉此網頁。"
     else:
         msg = "教務系統登入失敗，請確認帳號密碼後重試。"
 

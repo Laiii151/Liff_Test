@@ -13,7 +13,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-HOME_URL = "https://www.shu.edu.tw/"
+HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
 HEADLESS = False
 MAX_WAIT = 25
 
@@ -83,23 +83,7 @@ def _die(driver, msg, png, html):
 
 # --- 登入函式 ---
 def goto_student_system_from_home(driver):
-    """從首頁進入學生教務系統"""
-    print("🌐 正在進入世新大學首頁...")
     driver.get(HOME_URL)
-    time.sleep(2)
-    
-    # 點擊校務系統
-    print("🔍 尋找校務系統連結...")
-    ok = click_first_working(driver, [
-        ("css", "body > div.logosearch-area > div.n2021-area > p > a:nth-child(4)"),
-        ("xpath", "//a[contains(@href,'System-info.aspx')]"),
-        ("xpath", "//a[contains(text(),'校務系統')]"),
-    ])
-    if not ok:
-        _die(driver, "找不到『校務系統』連結", "fail_sys_link.png", "fail_sys_link.html")
-    
-    time.sleep(3)
-    
     # 點擊學生教務系統
     print("🔍 尋找學生教務系統連結...")
     ok = click_first_working(driver, [
@@ -157,7 +141,6 @@ def login_if_needed(driver, student_id, password):
         WebDriverWait(driver, 20).until(
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
-        time.sleep(2)
 
         # 檢查錯誤訊息
         end = time.time() + 8
