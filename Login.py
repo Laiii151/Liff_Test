@@ -128,7 +128,7 @@ def login_if_needed(driver, student_id, password):
             password_field.submit()
 
         print("⏳ 等待登入完成...")
-        time.sleep(0.8)
+        #time.sleep(0.8)
 
         # 可加額外判斷是否登入成功
         try:
@@ -138,12 +138,12 @@ def login_if_needed(driver, student_id, password):
         except Exception:
             print("ℹ️ 沒有找到 main frame，繼續使用預設內容")
 
-        WebDriverWait(driver, 20).until(
+        WebDriverWait(driver, 3).until(
             lambda d: d.execute_script("return document.readyState") == "complete"
         )
 
         # 檢查錯誤訊息
-        end = time.time() + 8
+        end = time.time() + 3
         while time.time() < end:
             try:
                 msg = driver.find_element(By.ID, 'lblMessage').text
