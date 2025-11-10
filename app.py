@@ -107,6 +107,23 @@ def find_or_create_folder(service, folder_name, parent_folder_id=None):
         
     folder = service.files().create(body=file_metadata, fields='id').execute()
     print(f"📁 已建立新資料夾: {folder_name} (ID: {folder.get('id')})")
+
+    # === 新增步驟：設定資料夾權限為公開 (任何人可讀) ===
+    try:
+        permission = {
+            'type': 'anyone',
+            'role': 'reader'
+        }
+        service.permissions().create(
+            fileId=folder.get('id'),
+            body=permission,
+            # 阻止 Google 發送通知郵件
+            sendNotificationEmail=False
+        ).execute()
+        print(f"🌐 資料夾 (ID: {folder.get('id')}) 已設為公開 ('anyone' with 'reader' role)。")
+    except Exception as e:
+        print(f"❌ 設定資料夾公開權限失敗 (ID: {folder.get('id')}): {e}")
+    # ===================================================
     return folder.get('id')
 
 BASE_DIR = Path(__file__).parent.resolve()
@@ -249,7 +266,7 @@ def callscraper():
     student_id = data.get('studentId').strip()
     password = data.get('password')
            # 主要訊息內容，統一管理
-    msg = "系統已開始自動同步教務資料，可關閉此網頁並稍後於雲端查詢。"
+    msg = "已同步教務資料，可進行查詢。"
     # 執行爬蟲與上傳流程（不把細節/結果回傳給前端，只印 terminal log）
     try:
         effective_user = student_id
@@ -370,6 +387,7 @@ def verify_login():
 
     if success:
         msg = "教務系統登入成功！可以關閉此網頁。"
+        msg += "同步教務資料中，稍後可至雲端查詢。"
 
         # 3. 登入成功後儲存 Line User ID 與憑證
         logged_in_users[line_user_id] = {
@@ -398,13 +416,11 @@ def verify_login():
         # 將成功登入的資料回傳
         response_data = {
             "success": True,
-            "message": msg,
+            "message": "同步成功，可開始查詢。",
             "studentId": student_id,
             "password": password
         }
-        # 發送完成後觸發爬蟲，同步教務資料
-        callscraper()
-        msg = "系統已自動同步教務資料，可關閉此網頁並稍後於雲端查詢。"   
+       
 
     else:
         msg = "教務系統登入失敗，請確認帳號密碼後重試。"
@@ -415,7 +431,8 @@ def verify_login():
         
     line_bot_api.push_message(line_user_id, TextSendMessage(text=msg))
     # 回傳最終結果
-    
+     # 發送完成後觸發爬蟲，同步教務資料
+    callscraper()
     return jsonify(response_data)
     
 

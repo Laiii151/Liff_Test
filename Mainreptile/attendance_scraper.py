@@ -41,9 +41,9 @@ if not USERNAME or PASSWORD is None:
     print("SHU_PASSWORD=你的密碼")
     exit(1)
 
-HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
+HOME_URL = "https://stulb.shu.edu.tw/"
 HEADLESS = False
-MAX_WAIT = 25
+MAX_WAIT = 10
 
 print(f"🔐 使用帳號：{USERNAME[:3]}***{USERNAME[-3:] if len(USERNAME) > 6 else '***'}")
 
@@ -114,7 +114,7 @@ def _die(driver, msg, png, html):
 def goto_student_system_from_home(driver):
     driver.get(HOME_URL)
     
-    # 點擊學生教務系統
+    """# 點擊學生教務系統
     print("🔍 尋找學生教務系統連結...")
     ok = click_first_working(driver, [
         ("css", "body > div:nth-child(10) > div > div.sm-page-all-area > div:nth-child(2) > div.ct-sub-sbox.ct-sub-nsbox.ct-sub-nsortbox > a:nth-child(9)"),
@@ -128,8 +128,7 @@ def goto_student_system_from_home(driver):
         driver.execute_script("window.open('https://stulb.shu.edu.tw/','_blank');")
     
     # 切換到新分頁
-    driver.switch_to.window(driver.window_handles[-1])
-    time.sleep(2)
+    driver.switch_to.window(driver.window_handles[-1])"""
 
 def login_if_needed(driver):
     """如需要則進行登入"""
@@ -137,10 +136,10 @@ def login_if_needed(driver):
     
     try:
         # 等待登入表單出現
-        username_field = WebDriverWait(driver, 12).until(
+        username_field = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text'],input[autocomplete='username']"))
         )
-        password_field = WebDriverWait(driver, 12).until(
+        password_field = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password'],input[autocomplete='current-password']"))
         )
         
@@ -229,7 +228,7 @@ def navigate_to_attendance(driver):
         print("ℹ️ 沒有找到 main frame，繼續使用預設內容")
     
     # 等待頁面載入完成
-    WebDriverWait(driver, 20).until(
+    WebDriverWait(driver, 4).until(
         lambda d: d.execute_script("return document.readyState") == "complete"
     )
     time.sleep(2)

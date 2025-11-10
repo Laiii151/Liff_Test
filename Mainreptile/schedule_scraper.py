@@ -34,8 +34,8 @@ except ImportError:
 
 
 HEADLESS = False     # 需要背景跑可改 True
-HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
-MAX_WAIT = 25
+HOME_URL = "https://stulb.shu.edu.tw/"
+MAX_WAIT = 10
 
 # 讀 .env 帳密
 try:
@@ -161,7 +161,7 @@ def text_clean(s: str) -> str:
 def goto_student_system_from_home(driver):
     driver.get(HOME_URL)
 
-    # 學生教務系統
+    """# 學生教務系統
     for by, sel in [
         (By.CSS_SELECTOR, "body > div:nth-child(10) > div > div.sm-page-all-area > div:nth-child(2) > div.ct-sub-sbox.ct-sub-nsbox.ct-sub-nsortbox > a:nth-child(9)"),
         (By.XPATH, "//a[contains(@href,'stulb.shu.edu.tw')]"),
@@ -176,14 +176,14 @@ def goto_student_system_from_home(driver):
     else:
         driver.execute_script("window.open('https://stulb.shu.edu.tw/','_blank');")
 
-    driver.switch_to.window(driver.window_handles[-1])
+    driver.switch_to.window(driver.window_handles[-1])"""
 
 def login_if_needed(driver):
     try:
-        u = WebDriverWait(driver, 8).until(
+        u = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text'],input[autocomplete='username']"))
         )
-        p = wait_present(driver, By.CSS_SELECTOR, "input[type='password'],input[autocomplete='current-password']", 8)
+        p = wait_present(driver, By.CSS_SELECTOR, "input[type='password'],input[autocomplete='current-password']", 5)
         u.clear(); u.send_keys(USERNAME)
         p.clear(); p.send_keys(PASSWORD)
         try:
@@ -210,7 +210,7 @@ def open_sc0106(driver):
             pass
         print("[WARN] 找不到 main frame，改用目前頁面繼續。")
 
-    wait_present(driver, By.CSS_SELECTOR, ".label", 15)
+    wait_present(driver, By.CSS_SELECTOR, ".label", 7)
 
     # 課務作業
     js_click(driver, driver.find_element(By.XPATH, "//span[@class='label' and contains(.,'課務作業')]"))

@@ -46,9 +46,9 @@ if not USERNAME or not PASSWORD:
     print("❌ 錯誤：請在 .env 檔案中設定 SHU_USERNAME 和 SHU_PASSWORD")
     exit(1)
 
-HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
+HOME_URL = "https://stulb.shu.edu.tw/"
 HEADLESS = False
-MAX_WAIT = 25
+MAX_WAIT = 10
 
 print(f"🔐 使用帳號：{USERNAME[:3]}***{USERNAME[-3:] if len(USERNAME) > 6 else '***'}")
 
@@ -98,7 +98,7 @@ def _die(driver, msg, png, html):
 # ---------------- 導覽函數 ----------------
 def goto_student_system_from_home(driver):
     driver.get(HOME_URL)
-    ok = click_first_working(driver, [
+    """ok = click_first_working(driver, [
         ("css",  "body > div:nth-child(10) .ct-sub-nsortbox > a:nth-child(9)"),
         ("css",  "body > div:nth-child(11) .ct-sub-nsortbox > a:nth-child(9)"),
         ("xpath","//a[contains(@href,'stulb.shu.edu.tw')]"),
@@ -106,14 +106,14 @@ def goto_student_system_from_home(driver):
     if not ok:
         driver.execute_script("window.open('https://stulb.shu.edu.tw/','_blank');")
 
-    driver.switch_to.window(driver.window_handles[-1])
+    driver.switch_to.window(driver.window_handles[-1])"""
 
 def login_if_needed(driver):
     try:
-        u = WebDriverWait(driver, 12).until(
+        u = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text'],input[autocomplete='username']"))
         )
-        p = WebDriverWait(driver, 12).until(
+        p = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password'],input[autocomplete='current-password']"))
         )
         u.clear(); u.send_keys(USERNAME)
@@ -184,9 +184,9 @@ def open_ranking_page(driver):
     except Exception:
         _die(driver, "找不到 main frame", "no_main_frame.png", "frameset_outer.html")
 
-    WebDriverWait(driver, 20).until(lambda d: d.execute_script("return document.readyState") == "complete")
+    WebDriverWait(driver, 10).until(lambda d: d.execute_script("return document.readyState") == "complete")
     try:
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".label")))
+        WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".label")))
     except TimeoutException:
         _die(driver, "main frame 內未出現 .label", "main_no_labels.png", "main_no_labels.html")
 
@@ -256,9 +256,7 @@ def open_ranking_page(driver):
 
     if not success:
         _die(driver, "點不到『SD0104-歷年(學期)名次查詢』選單", "click_fail_ranking.png", "click_fail_ranking.html")
-
-    time.sleep(3.0)
-
+    time.sleep(1.2)
 # ---------------- 解析 + 清理函數 ----------------
 def parse_ranking_data(driver) -> pd.DataFrame:
     """解析歷年名次數據"""

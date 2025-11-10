@@ -36,7 +36,8 @@ if not USERNAME or not PASSWORD:
     print("SHU_PASSWORD=你的密碼")
     raise ValueError("❌ 致命錯誤：SHU_USERNAME 或 SHU_PASSWORD 環境變數未設定！")
 
-HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
+#HOME_URL = "https://www.shu.edu.tw/System-info.aspx"
+HOME_URL = "https://stulb.shu.edu.tw/"
 HEADLESS = False
 MAX_WAIT = 25
 
@@ -108,7 +109,7 @@ def _die(driver, msg, png, html):
 def goto_student_system_from_home(driver):
     driver.get(HOME_URL)
     # 學生教務系統
-    ok = click_first_working(driver, [
+    """ok = click_first_working(driver, [
         ("css",  "body > div:nth-child(10) > div > div.sm-page-all-area > div:nth-child(2) > div.ct-sub-sbox.ct-sub-nsbox.ct-sub-nsortbox > a:nth-child(9)"),
         ("css",  "body > div:nth-child(11) > div > div.sm-page-all-area > div:nth-child(2) > div.ct-sub-sbox.ct-sub-nsbox.ct-sub-nsortbox > a:nth-child(9)"),
         ("xpath","//a[contains(@href,'stulb.shu.edu.tw')]"),
@@ -117,14 +118,14 @@ def goto_student_system_from_home(driver):
     if not ok:
         driver.execute_script("window.open('https://stulb.shu.edu.tw/','_blank');")
 
-    driver.switch_to.window(driver.window_handles[-1])
+    driver.switch_to.window(driver.window_handles[-1])"""
 
 def login_if_needed(driver):
     try:
-        u = WebDriverWait(driver, 12).until(
+        u = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text'],input[autocomplete='username']"))
         )
-        p = WebDriverWait(driver, 12).until(
+        p = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password'],input[autocomplete='current-password']"))
         )
         u.clear()
@@ -147,9 +148,9 @@ def open_grade_history(driver):
     except Exception:
         _die(driver, "找不到 main frame", "no_main_frame.png", "frameset_outer.html")
 
-    WebDriverWait(driver, 20).until(lambda d: d.execute_script("return document.readyState") == "complete")
+    WebDriverWait(driver, 8).until(lambda d: d.execute_script("return document.readyState") == "complete")
     try:
-        WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".label")))
+        WebDriverWait(driver, 6).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".label")))
     except TimeoutException:
         _die(driver, "main frame 內未出現 .label", "main_no_labels.png", "main_no_labels.html")
 
@@ -193,8 +194,6 @@ def open_grade_history(driver):
         """)
     if not ok:
         _die(driver, "點不到『SD0101-歷年成績查詢』", "click_fail_sd0101.png", "click_fail_sd0101.html")
-    
-    time.sleep(3.0)
 
 # ---------------- 工具函數 ----------------
 def safe_int(value):
