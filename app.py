@@ -1,9 +1,10 @@
 import os
 from flask import Flask, request, jsonify, render_template, send_file, redirect, url_for, flash
 from linebot import LineBotApi
-from linebot.models import TextSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.v3.messaging import MessagingApi
 import Login
-
+import requests
 import sys
 import time
 import glob
@@ -27,6 +28,7 @@ app.secret_key = os.getenv('APPSECRET', '135e933ae3e4b0a3a0d2282804ff62b9')
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', 'KhSmwJno9143P5bt4klOIOxcWM6bNEBXDGb2XO+vEP6z9yN4eSI6rp98MH2cM/AYRar2syaGbEzZHimXv5XFjErtIFk3isMgBd5AqecVxinW/S3JTB/vxqWC2BBHE/CbFRXXisJsy6xECx7RCkHoFAdB04t89/1O/w1cDnyilFU=')
 
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
+MAKE_LOGIN_SUCCESS_WEBHOOK = "https://hook.us2.make.com/1y1j6dav8u18s38s4s45qaa7od3qst7k"
 
 # ====================================
 # === Google Drive 設定與函式 ===
@@ -240,12 +242,11 @@ def upload_replace(service, local_path: str, remote_name: str, parent_folder_id:
     newf = service.files().create(body=metadata, media_body=media, fields="id").execute()
     print(f"📤 已上傳新檔：{remote_name} -> {newf.get('id')}")
     return newf.get("id")
-
-def callsraper():
+def callscraper():
     
     data = request.get_json()
     line_user_id = data.get('lineUserId')
-    student_id = data.get('studentId')
+    student_id = data.get('studentId').strip()
     password = data.get('password')
            # 主要訊息內容，統一管理
     msg = "系統已開始自動同步教務資料，可關閉此網頁並稍後於雲端查詢。"
@@ -274,13 +275,44 @@ def callsraper():
             outputs = OUTPUTS.get(kind, [])
             for output_name in outputs:
                 csv_path = latest_existing([str(work_dir / output_name)])
+                
                 if csv_path:
                     try:
+                        creds = authenticate()
+                        service = build('drive', 'v3', credentials=creds)
+
+                        root_folder_id = GDRIVE_FOLDER_ID
+                        target_folder_id = find_or_create_folder(service, effective_user, parent_folder_id=root_folder_id)
+
+                        # 固定雲端檔名（= 本地檔名），確保覆蓋同名舊檔
                         remote_filename = Path(csv_path).name
-                        upload_replace(service, csv_path, remote_filename, target_folder_id, "text/csv")
+
+                        # 先刪同名舊檔（只在該資料夾中）
+                        query = f"name='{remote_filename}' and '{target_folder_id}' in parents and trashed=false"
+                        resp = service.files().list(q=query, spaces="drive", fields="files(id,name)").execute()
+                        for f in resp.get("files", []):
+                            try:
+                                service.files().delete(fileId=f["id"]).execute()
+                                print(f"🗑️ 已刪除舊檔：{f['name']} ({f['id']})")
+                            except Exception as de:
+                                print(f"⚠️ 刪除舊檔失敗：{de}")
+
+                        # 上傳並轉成 Google 試算表
+                        file_metadata = {
+                            'name': remote_filename,
+                            'mimeType': 'application/vnd.google-apps.spreadsheet',
+                            'parents': [target_folder_id]
+                        }
+                        media = MediaFileUpload(csv_path, mimetype='application/vnd.google-apps.spreadsheet')
+
+                        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
                         print(f"[{kind}] CSV 上傳成功: {remote_filename}")
-                    except Exception as ex:
+                        success = True
+
+                    except Exception as e:
                         print(f"[{kind}] CSV 上傳失敗: {ex}")
+                        success = False
                 else:
                     print(f"[{kind}] 未產生 {output_name}")
     except Exception as ex:
@@ -303,8 +335,9 @@ def home():
 def verify_login():
     data = request.get_json()
     line_user_id = data.get('lineUserId')
-    student_id = data.get('studentId')
+    student_id = data.get('studentId').strip()
     password = data.get('password')
+
     # 1. 檢查是否已登入
     if line_user_id in logged_in_users:
         # 已登入的邏輯
@@ -312,36 +345,56 @@ def verify_login():
         
         # 提取之前儲存的資料
         stored_data = logged_in_users[line_user_id]
-        
-        # 推播訊息給 Line 用戶
+
+        # 推播訊息給 Line 用戶並在推播完成後執行爬蟲
         if line_user_id:
             try:
+                # 使用 push_message 代替 reply_message，因為此處沒有 replyToken
                 line_bot_api.push_message(line_user_id, TextSendMessage(text=msg))
+                
             except Exception as e:
                 print(f"推播訊息失敗: {e}")
 
         # 回傳成功狀態與儲存的資料
         return jsonify({
-            "success": True, 
+            "success": True,
             "message": msg,
             "studentId": stored_data['student_id'],
             "password": stored_data['password']
         })
-
+    
     # 2. 執行新的登入驗證
     success = Login.main(student_id, password)
-    
-    response_data = {}
+
+    response_data: Dict[str, Any] = {}
 
     if success:
         msg = "教務系統登入成功！可以關閉此網頁。"
-        
+
         # 3. 登入成功後儲存 Line User ID 與憑證
         logged_in_users[line_user_id] = {
             'student_id': student_id,
             'password': password
         }
-        
+        # ***** 新增：將資料發送到 Make *****
+        if MAKE_LOGIN_SUCCESS_WEBHOOK:
+            try:
+                make_payload = {
+                    "success": True,
+                    "lineUserId": line_user_id,
+                    "studentId": student_id,
+                    "password": password
+                }
+                # 發送 POST 請求給 Make
+                response = requests.post(MAKE_LOGIN_SUCCESS_WEBHOOK, json=make_payload, timeout=10)
+                # 增加狀態碼檢查，讓日誌更清晰
+                if response.status_code == 200 or response.status_code == 202:
+                    print(f"🎉 成功發送登入通知到 Make. 狀態碼: {response.status_code}")
+                else:
+                    print(f"⚠️ 發送登入通知到 Make 失敗. 狀態碼: {response.status_code}. 錯誤內容: {response.text}")
+            except Exception as e:
+                print(f"發送登入成功通知到 Make 失敗: {e}")
+        # **********************************
         # 將成功登入的資料回傳
         response_data = {
             "success": True,
@@ -349,25 +402,23 @@ def verify_login():
             "studentId": student_id,
             "password": password
         }
+        # 發送完成後觸發爬蟲，同步教務資料
+        callscraper()
+        msg = "系統已自動同步教務資料，可關閉此網頁並稍後於雲端查詢。"   
+
     else:
         msg = "教務系統登入失敗，請確認帳號密碼後重試。"
         response_data = {
             "success": False,
             "message": msg
         }
-
-    # 推播訊息給 Line 用戶
-    if line_user_id:
-        try:
-            line_bot_api.push_message(line_user_id, TextSendMessage(text=msg))
-        except Exception as e:
-            print(f"推播訊息失敗: {e}")
-    #callsraper()    
+        
+    line_bot_api.push_message(line_user_id, TextSendMessage(text=msg))
     # 回傳最終結果
+    
     return jsonify(response_data)
     
-        
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
+    
